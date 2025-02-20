@@ -1,0 +1,65 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+void merge(int arr[], int left[], int right[], int nl, int nr);
+void mergesort(int arr[], int n){
+    if (n < 2)
+        return;
+    int mid, v1, v2;
+    mid = n / 2;
+    v1 = mid;
+    v2 = n - mid;
+    int left[v1], right[v2];
+
+    for (int i = 0; i < mid; i++)
+        left[i] = arr[i];
+    
+    for (int i = mid; i < n; i++)
+        right[i - mid] = arr[i];
+    
+    mergesort(left, mid);
+    mergesort(right, n - mid);
+    int nl = mid;
+    int nr = n - mid;
+    merge(arr, left, right, nl, nr);
+}
+void merge(int arr[], int left[], int right[], int nl, int nr){
+    int i = 0, j = 0, k = 0;
+    while (i < nl && j < nr){
+        if (left[i] < right[j]){
+            arr[k] = left[i];
+            i++;
+        }
+        else{
+            arr[k] = right[j];
+            j++;
+        }
+        k++;
+    }
+    while (i < nl){
+        arr[k] = left[i];
+        i++;
+        k++;
+    }
+    while (j < nr){
+        arr[k] = right[j];
+        j++;
+       k++;
+    }
+}
+
+int main(){
+    int n;
+    cout<<"Enter array size: ";
+    cin >> n;
+    int array[n];
+    cout<<"Enter array elements: ";
+    for (int i = 0; i < n; i++)
+        cin >> array[i];
+    cout<<"\nSorted array: ";
+    mergesort(array, n);
+    for (int i = 0; i < n; i++)
+        cout << array[i] << " ";
+    cout << endl<<endl;
+    return 0;
+}
