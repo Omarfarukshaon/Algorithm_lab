@@ -1,0 +1,60 @@
+#include<iostream>
+#include<vector>
+#include<stack>
+using namespace std;
+
+vector<int> dfs(int start, vector<vector<int>>& adj, int n) {
+    int vis[n+1] = {0};
+    vis[start] = 1;
+    vector<int> dfsGraph;
+    stack<int> s;
+    s.push(start);
+    dfsGraph.push_back(start);
+    
+    while (!s.empty()) {
+        int node = s.top();
+        s.pop();
+        for (int j : adj[node]) {
+            if (!vis[j]) {
+                s.push(node);
+                s.push(j); 
+                vis[j] = 1;
+                dfsGraph.push_back(j);
+                break; 
+            }
+        }
+    }
+    return dfsGraph;
+}
+
+int main() {
+    int V, E;
+    cout << "Enter the number of vertices: ";
+    cin >> V;
+    cout << "Enter the number of edges: ";
+    cin >> E;
+
+    vector<vector<int>> adj(V); 
+    
+    cout << "Enter the edges (format: v w):" << endl;
+    for (int i = 0; i < E; i++) {
+        int v, w;
+        cin >> v >> w;
+        adj[v].push_back(w);
+        adj[w].push_back(v); 
+    }
+    
+    int start;
+    cout << "Enter the starting vertex for DFS: ";
+    cin >> start;
+    
+    vector<int> result = dfs(start, adj, V);
+    
+    cout << "DFS Traversal: ";
+    for (int i : result) {
+        cout << i << " ";
+    }
+    cout << endl;
+
+    return 0;
+}
