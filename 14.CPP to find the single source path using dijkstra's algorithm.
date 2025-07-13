@@ -1,56 +1,59 @@
 #include <iostream>
+#include <vector>
+#include <queue>
 #include <climits>
 using namespace std;
 
-const int MAX = 100;
+vector<pair<int, int>> adjlist[6];
+vector<int> dijk(int s, vector<pair<int, int>> adjlist[], int n) {
+    vector<int> dist(n + 1, INT_MAX);
+    dist[s] = 0;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq; // Min-heap
+    pq.push({0, s});
 
-// Function to find vertex with minimum distance value
-int minDistance(int dist[], bool visited[], int V) {
-    int min = INT_MAX, minIndex;
-    for (int v = 0; v < V; v++)
-        if (!visited[v] && dist[v] < min)
-            min = dist[v], minIndex = v;
-    return minIndex;
+    while (!pq.empty()) {
+        int distance = pq.top().first;
+        int node = pq.top().second;
+        pq.pop();
+
+        for (auto edge : adjlist[node]) {
+            int nextNode = edge.first;
+            int weight = edge.second;
+
+            if (dist[node] + weight < dist[nextNode]) {
+                dist[nextNode] = dist[node] + weight;
+                pq.push({dist[nextNode], nextNode});
+            }
+        }
+    }
+    return dist;
 }
 
 int main() {
-    int V;
-    cout << "Enter number of vertices: ";
+    int V, E;
+    cout << "Enter the number of vertices: ";
     cin >> V;
+    cout << "Enter the number of edges: ";
+    cin >> E;
 
-    int graph[MAX][MAX];
-    cout << "Enter adjacency matrix (0 if no edge, weight if edge):\n";
-    for (int i = 0; i < V; i++)
-        for (int j = 0; j < V; j++)
-            cin >> graph[i][j];
+    for (int i = 0; i < E; i++) {
+        int v, w, weight;
+        cout << "Enter edge (v w weight): ";
+        cin >> v >> w >> weight;
+        adjlist[v].push_back({w, weight});
+        adjlist[w].push_back({v, weight}); // for undirected graphs
+    }
 
-    int source;
-    cout << "Enter source vertex (0 to " << V - 1 << "): ";
-    cin >> source;
+    int start;
+    cout << "Enter the starting vertex for Dijkstra's Algorithm: ";
+    cin >> start;
 
-    int dist[MAX];       // Shortest distances from source
-    bool visited[MAX];   // Visited vertices
+    vector<int> result = dijk(start, adjlist, V);
 
+    cout << "\nShortest distances from vertex " << start << ":" << endl;
     for (int i = 0; i < V; i++) {
-        dist[i] = INT_MAX;
-        visited[i] = false;
+        cout << "Vertex " << i << " -> Distance " << result[i] << endl;
     }
-
-    dist[source] = 0;
-
-    for (int count = 0; count < V - 1; count++) {
-        int u = minDistance(dist, visited, V);
-        visited[u] = true;
-
-        for (int v = 0; v < V; v++)
-            if (!visited[v] && graph[u][v] && dist[u] != INT_MAX
-                && dist[u] + graph[u][v] < dist[v])
-                dist[v] = dist[u] + graph[u][v];
-    }
-
-    cout << "\nShortest distances from vertex " << source << ":\n";
-    for (int i = 0; i < V; i++)
-        cout << "To " << i << " : " << dist[i] << endl;
-
+cout<<endl;
     return 0;
 }
