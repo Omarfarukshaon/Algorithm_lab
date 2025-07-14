@@ -28,10 +28,7 @@ int main() {
         cin >> arr[i];
 
     sort(arr,arr+len);
-    // print the sorted array
-    cout << "\nThe New Sorted Array is:\n";
-    for(int i = 0; i < len; i++)
-        cout << arr[i] << " ";
+    
 
     // now back to binary search
     cout << "\n\nEnter Element to be Searched: ";
