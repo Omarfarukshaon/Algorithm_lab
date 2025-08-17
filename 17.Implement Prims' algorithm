@@ -1,38 +1,41 @@
-//prims algorithm
-
 #include <iostream>
-#include <vector>
-#include <queue>
+#include <climits>
 using namespace std;
 
-typedef pair<int, int> pii;
+const int MAX = 100;
+int cost[MAX][MAX];
+bool inMST[MAX];
 
-void prims(int n, vector<vector<pii>>& adj) {
-    vector<bool> inMST(n, false);
-    priority_queue<pii, vector<pii>, greater<pii>> pq;
-
+int prims(int n) {
     int totalWeight = 0;
-    pq.push({0, 0}); 
+    int key[MAX], parent[MAX];
+    for (int i = 0; i < n; i++) {
+        key[i] = INT_MAX;
+        inMST[i] = false;
+    }
 
-    while (!pq.empty()) {
-        auto [weight, u] = pq.top();
-        pq.pop();
+    key[0] = 0;
+    parent[0] = -1;
 
-        if (inMST[u]) continue;
+    for (int count = 0; count < n; count++) {
+        int u = -1;
+        for (int i = 0; i < n; ++i)
+            if (!inMST[i] && (u == -1 || key[i] < key[u]))
+                u = i;
 
         inMST[u] = true;
-        totalWeight += weight;
+        totalWeight += key[u];
+        cout << "Add vertex " << u << " with edge weight " << key[u] << endl;
 
-        cout << "Add vertex " << u << " with edge weight " << weight << endl;
-
-        for (auto [w, v] : adj[u]) {
-            if (!inMST[v]) {
-                pq.push({w, v});
+        for (int v = 0; v < n; v++) {
+            if (cost[u][v] && !inMST[v] && cost[u][v] < key[v]) {
+                key[v] = cost[u][v];
+                parent[v] = u;
             }
         }
     }
 
-    cout << "Total weight of MST: " << totalWeight << endl<<endl;
+    return totalWeight;
 }
 
 int main() {
@@ -42,16 +45,18 @@ int main() {
     cout << "Enter number of edges: ";
     cin >> e;
 
-    vector<vector<pii>> adj(n);
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            cost[i][j] = 0;
 
     cout << "Enter edges (format: u v weight):\n";
-    for (int i = 0; i < e; ++i) {
+    for (int i = 0; i < e; i++) {
         int u, v, w;
         cin >> u >> v >> w;
-        adj[u].push_back({w, v});
-        adj[v].push_back({w, u});
+        cost[u][v] = cost[v][u] = w;
     }
 
-    prims(n, adj);
+    int total = prims(n);
+    cout << "Total weight of MST: " << total << endl;
     return 0;
 }
