@@ -2,34 +2,32 @@
 #include <ctime>
 using namespace std;
 
-/* Bubble Sort */
-void bubbleSort(int arr[], int n) {
+void bubbleSort(int a[], int n) {
     for (int i = 0; i < n - 1; i++)
         for (int j = 0; j < n - i - 1; j++)
-            if (arr[j] > arr[j + 1])
-                swap(arr[j], arr[j + 1]);
+            if (a[j] > a[j + 1])
+                swap(a[j], a[j + 1]);
 }
 
-/* Quick Sort */
-int partition(int arr[], int low, int high) {
-    int pivot = arr[low];
-    int left = low, right = high;
-
-    while (left < right) {
-        while (arr[left] <= pivot) left++;
-        while (arr[right] > pivot) right--;
-        if (left < right)
-            swap(arr[left], arr[right]);
+int partition(int a[], int l, int h) {
+    int p = a[l], i = l, j = h;
+    while (i < j) {
+        while (a[i] <= p)
+        i++;
+        while (a[j] > p)
+         j--;
+        if (i < j)
+         swap(a[i], a[j]);
     }
-    swap(arr[low], arr[right]);
-    return right;
+    swap(a[l], a[j]);
+    return j;
 }
 
-void quickSort(int arr[], int low, int high) {
-    if (low < high) {
-        int location = partition(arr, low, high);
-        quickSort(arr, low, location - 1);
-        quickSort(arr, location + 1, high);
+void quickSort(int a[], int l, int h) {
+    if (l < h) {
+        int p = partition(a, l, h);
+        quickSort(a, l, p - 1);
+        quickSort(a, p + 1, h);
     }
 }
 
@@ -38,30 +36,20 @@ int main() {
     cout << "Enter array size: ";
     cin >> n;
 
-    int original[n], arrBubble[n], arrQuick[n];
-
+    int a[n], b[n], q[n];
     cout << "Enter array elements: ";
     for (int i = 0; i < n; i++) {
-        cin >> original[i];
-        arrBubble[i] = original[i];
-        arrQuick[i] = original[i];
+        cin >> a[i];
+        b[i] = q[i] = a[i];
     }
 
-    // Measure Bubble Sort Time
-    clock_t startBubble = clock();
-    bubbleSort(arrBubble, n);
-    clock_t endBubble = clock();
-    double timeBubble = double(endBubble - startBubble) / CLOCKS_PER_SEC;
+    clock_t s1 = clock(); bubbleSort(b, n); clock_t e1 = clock();
+    clock_t s2 = clock(); quickSort(q, 0, n - 1); clock_t e2 = clock();
 
-    // Measure Quick Sort Time
-    clock_t startQuick = clock();
-    quickSort(arrQuick, 0, n - 1);
-    clock_t endQuick = clock();
-    double timeQuick = double(endQuick - startQuick) / CLOCKS_PER_SEC;
-
-    // Display Results
-    cout << "\nTime complexity of Bubble Sort: " << timeBubble << " seconds" << endl;
-    cout << "Time complexity of Quick Sort: " << timeQuick << " seconds" << endl;
+    cout << "\nTime complexity of Bubble Sort: "
+         << double(e1 - s1) / CLOCKS_PER_SEC << " seconds" << endl;
+    cout << "Time complexity of Quick Sort: "
+         << double(e2 - s2) / CLOCKS_PER_SEC << " seconds" << endl;
 
     return 0;
 }
