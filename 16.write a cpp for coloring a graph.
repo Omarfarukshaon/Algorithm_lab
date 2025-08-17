@@ -1,38 +1,12 @@
 #include <iostream>
-#include <vector>
 using namespace std;
 
-void greedyColoring(vector<vector<int>>& graph, int V) {
-    vector<int> result(V, -1); 
-    result[0] = 0; 
-    vector<bool> available(V, false); 
+const int MAX = 100;
 
-    cout << "\nColoring process:\n";
-    cout << "Vertex 0 ---> Color 0\n";
-
-    for (int u = 1; u < V; u++) {
-        for (int i : graph[u]) {
-            if (result[i] != -1) {
-                available[result[i]] = true;
-            }
-        }
-
-        int cr;
-        for (cr = 0; cr < V; cr++) {
-            if (!available[cr])
-                break;
-        }
-
-        result[u] = cr;
-        cout << "Vertex " << u << " ---> Color " << cr << endl;
-
-        for (int i : graph[u]) {
-            if (result[i] != -1) {
-                available[result[i]] = false;
-            }
-        }
-    }
-}
+int graph[MAX][MAX]; 
+int degree[MAX];     
+int result[MAX];     
+bool available[MAX]; 
 
 int main() {
     int V, E;
@@ -41,16 +15,42 @@ int main() {
     cout << "Enter number of edges: ";
     cin >> E;
 
-    vector<vector<int>> graph(V);
+    for (int i = 0; i < V; ++i)
+        degree[i] = 0;
 
     cout << "Enter each edge (u v):\n";
-    for (int i = 0; i < E; i++) {
+    for (int i = 0; i < E; ++i) {
         int u, v;
         cin >> u >> v;
-        graph[u].push_back(v);
-        graph[v].push_back(u); 
+        graph[u][degree[u]++] = v;
+        graph[v][degree[v]++] = u;
     }
 
-    greedyColoring(graph, V);
+    for (int i = 0; i < V; ++i)
+        result[i] = -1;
+
+    result[0] = 0;
+    cout << "\nColoring process:\n";
+    cout << "Vertex 0 ---> Color 0\n";
+
+    for (int u = 1; u < V; ++u) {
+        for (int i = 0; i < V; ++i)
+            available[i] = false;
+
+        for (int i = 0; i < degree[u]; ++i) {
+            int neighbor = graph[u][i];
+            if (result[neighbor] != -1)
+                available[result[neighbor]] = true;
+        }
+
+        int cr;
+        for (cr = 0; cr < V; ++cr)
+            if (!available[cr])
+                break;
+
+        result[u] = cr;
+        cout << "Vertex " << u << " ---> Color " << cr << endl;
+    }
+
     return 0;
 }
