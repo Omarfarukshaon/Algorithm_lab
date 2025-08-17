@@ -14,10 +14,8 @@ void sumOfSubsets(int set[], int subset[], int n, int index, int subsetSize, int
 
     if (index == n || currentSum > target)
         return;
-
     subset[subsetSize] = set[index];
-    
-    sumOfSubsets(set, subset, n, index, subsetSize + 1, currentSum + set[index], target);
+    sumOfSubsets(set, subset, n, index + 1, subsetSize + 1, currentSum + set[index], target);
 
     sumOfSubsets(set, subset, n, index + 1, subsetSize, currentSum, target);
 }
@@ -36,9 +34,9 @@ int main() {
     cout << "Enter target sum: ";
     cin >> target;
 
-    cout << "\nSubsets with sum " << target <<endl;
+    cout << "\nSubsets with sum " << target << ":\n";
     sumOfSubsets(set, subset, n, 0, 0, 0, target);
-    cout << endl << endl;
+    cout << endl;
 
     return 0;
 }
